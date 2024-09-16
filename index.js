@@ -23,9 +23,6 @@ async function run() {
     try {
         const userCollection = client.db("messTracker").collection("users")
         app.post('/users', async (req, res) => {
-
-            // insert email if user doesn't exists: 
-            // you can do this many ways (1. email unique, 2. upsert 3. simple checking)
             const user = req.body;
             const query = { email: user.email }
             const existingUser = await userCollection.findOne(query);
@@ -35,6 +32,12 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
+        app.get('/users', async (req, res) => {
+
+            const cursor = userCollection.find();
+            const result = await cursor.toArray()
+            res.send(result)
+        })
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         // Send a ping to confirm a successful connection
