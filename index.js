@@ -45,6 +45,11 @@ async function run() {
             const result = await userMealCollection.insertOne(meals);
             res.send(result) 
         })
+        app.get('/membersAllMeals',async(req,res)=>{
+            const cursor = userMealCollection.find();
+            const result = await cursor.toArray()
+            res.send(result)
+        })
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         // Send a ping to confirm a successful connection
