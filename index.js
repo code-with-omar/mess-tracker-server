@@ -22,6 +22,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         const userCollection = client.db("messTracker").collection("users")
+        const userMealCollection = client.db("messTracker").collection("meals")
         app.post('/users', async (req, res) => {
             const user = req.body;
             const query = { email: user.email }
@@ -37,6 +38,12 @@ async function run() {
             const cursor = userCollection.find();
             const result = await cursor.toArray()
             res.send(result)
+        })
+        // add meal
+        app.post('/addMeals', async (req, res) => {
+            const meals = req.body;
+            const result = await userMealCollection.insertOne(meals);
+            res.send(result) 
         })
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
