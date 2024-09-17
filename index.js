@@ -65,18 +65,24 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        //Bazar
+        //Bazar 
         app.post('/bazar', async (req, res) => {
             const bazar = req.body;
             const result = await bazarCollection.insertOne(bazar);
             res.send(result)
-        })//
+        })
+        //Find all bazar
+        app.get('/bazar', async (req, res) => {
+            const cursor = bazarCollection.find();
+            const result = await cursor.toArray()
+            res.send(result)
+        })
         
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        // await client.db("admin").command({ ping: 1 });
+        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
