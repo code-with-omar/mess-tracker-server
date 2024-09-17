@@ -41,7 +41,7 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/usersFind',async (req, res) => {
+        app.get('/usersFind', async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userMealCollection.find(query);
@@ -72,6 +72,13 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        app.get('/usersDeposit', async (req, res) => {
+            const email = req.query.email
+            const query = { email: email }
+            const cursor = userDepositCollection.find(query);
+            const result = await cursor.toArray()
+            res.send(result);
+        })
         //Bazar 
         app.post('/bazar', async (req, res) => {
             const bazar = req.body;
@@ -84,7 +91,7 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        
+
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
         // Send a ping to confirm a successful connection
