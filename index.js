@@ -54,10 +54,17 @@ async function run() {
         })
         // add deposit
         app.post('/deposit', async (req, res) => {
-            const meals = req.body;
-            const result = await userDepositCollection.insertOne(meals);
+            const money = req.body;
+            const result = await userDepositCollection.insertOne(money);
             res.send(result)
         })
+        // get all deposit find API
+        app.get('/deposit', async (req, res) => {
+            const cursor = userDepositCollection.find();
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+        
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
         // Send a ping to confirm a successful connection
