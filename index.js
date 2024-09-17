@@ -24,6 +24,7 @@ async function run() {
         const userCollection = client.db("messTracker").collection("users")
         const userMealCollection = client.db("messTracker").collection("meals")
         const userDepositCollection = client.db("messTracker").collection("deposit")
+        const bazarCollection = client.db("messTracker").collection("bazar")
         app.post('/users', async (req, res) => {
             const user = req.body;
             const query = { email: user.email }
@@ -64,6 +65,12 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        //Bazar
+        app.post('/bazar', async (req, res) => {
+            const bazar = req.body;
+            const result = await bazarCollection.insertOne(bazar);
+            res.send(result)
+        })//
         
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
