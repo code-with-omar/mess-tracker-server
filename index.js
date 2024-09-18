@@ -25,6 +25,18 @@ async function run() {
         const userMealCollection = client.db("messTracker").collection("meals")
         const userDepositCollection = client.db("messTracker").collection("deposit")
         const bazarCollection = client.db("messTracker").collection("bazar")
+        const cookBilCollection = client.db("messTracker").collection("cookBill")
+        // cook bil post
+        app.post('/cookBill', async (req, res) => {
+            const cook = req.body;
+            const result = await cookBilCollection.insertOne(cook);
+            res.send(result)
+        })
+        app.get('/cookBill', async (req, res) => {
+            const cursor = cookBilCollection.find();
+            const result = await cursor.toArray()
+            res.send(result)
+        })
         app.post('/users', async (req, res) => {
             const user = req.body;
             const query = { email: user.email }
@@ -41,7 +53,16 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        // find individual user by email
         app.get('/usersFind', async (req, res) => {
+            const email = req.query.email
+            const query = { email: email }
+            const cursor = userCollection.find(query);
+            const result = await cursor.toArray()
+            res.send(result);
+        })
+        // user meal find
+        app.get('/usersMealFind', async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userMealCollection.find(query);
