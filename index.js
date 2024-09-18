@@ -26,6 +26,12 @@ async function run() {
         const userDepositCollection = client.db("messTracker").collection("deposit")
         const bazarCollection = client.db("messTracker").collection("bazar")
         const cookBilCollection = client.db("messTracker").collection("cookBill")
+        const managerAllHistory = client.db("messTracker").collection("managerHistory")
+        app.post('/closeManagerHistory', async (req, res) => {
+            const cook = req.body;
+            const result = await managerAllHistory.insertOne(cook);
+            res.send(result)
+        })
         // cook bil post
         app.post('/cookBill', async (req, res) => {
             const cook = req.body;
