@@ -44,7 +44,7 @@ async function run() {
                 return res.status(401).send({ message: 'unauthorized access' })
             }
             const token = req.headers.authorization.split(' ')[1]
-            // console.log(token)
+            console.log(token)
 
             jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
                 if (err) {
@@ -60,24 +60,24 @@ async function run() {
             const query = { email: email }
             const user = await userCollection.find(query).toArray()
             const isAdmin = user[0]?.role === 'admin'
-            // console.log(user)
+            console.log(user)
             if (!isAdmin) {
                 return res.status(403).send({ message: 'forbidden access' })
             }
             next()
         }
-        app.post('/closeManagerHistory', async (req, res) => {
+        app.post('/closeManagerHistory', verifyToken, verifyAdmin, async (req, res) => {
             const cook = req.body;
             const result = await managerAllHistory.insertOne(cook);
             res.send(result)
         })
-        app.get("/closeManagerHistory", async (req, res) => {
+        app.get("/closeManagerHistory",verifyToken, async (req, res) => {
             const cursor = managerAllHistory.find();
             const result = await cursor.toArray()
             res.send(result)
         })
         // make manager/ admin 
-        app.patch('/users/admin/:id', async (req, res) => {
+        app.patch('/users/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const updateDoc = {
@@ -90,7 +90,7 @@ async function run() {
 
         })
         // make user remove manager/admin
-        app.patch('/users/removeAdmin/:id', async (req, res) => {
+        app.patch('/users/removeAdmin/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const updateDoc = {
@@ -103,12 +103,12 @@ async function run() {
 
         })
         // cook bil post
-        app.post('/cookBill', async (req, res) => {
+        app.post('/cookBill', verifyToken, verifyAdmin, async (req, res) => {
             const cook = req.body;
             const result = await cookBilCollection.insertOne(cook);
             res.send(result)
         })
-        app.get('/cookBill', async (req, res) => {
+        app.get('/cookBill',verifyToken, async (req, res) => {
             const cursor = cookBilCollection.find();
             const result = await cursor.toArray()
             res.send(result)
@@ -123,14 +123,14 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
-        app.get('/users', async (req, res) => {
+        app.get('/users', verifyToken, async (req, res) => {
 
             const cursor = userCollection.find();
             const result = await cursor.toArray()
             res.send(result)
         })
         // find individual user by email
-        app.get('/usersFind', async (req, res) => {
+        app.get('/usersFind',verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userCollection.find(query);
@@ -138,7 +138,7 @@ async function run() {
             res.send(result);
         })
         // user meal find
-        app.get('/usersMealFind', async (req, res) => {
+        app.get('/usersMealFind',verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userMealCollection.find(query);
@@ -146,30 +146,30 @@ async function run() {
             res.send(result);
         })
         // add meal
-        app.post('/addMeals', async (req, res) => {
+        app.post('/addMeals', verifyToken, verifyAdmin, async (req, res) => {
             const meals = req.body;
             const result = await userMealCollection.insertOne(meals);
             res.send(result)
         })
         // find all members meal
-        app.get('/membersAllMeals', async (req, res) => {
+        app.get('/membersAllMeals',verifyToken, async (req, res) => {
             const cursor = userMealCollection.find();
             const result = await cursor.toArray()
             res.send(result)
         })
         // add deposit
-        app.post('/deposit', async (req, res) => {
+        app.post('/deposit', verifyToken, verifyAdmin, async (req, res) => {
             const money = req.body;
             const result = await userDepositCollection.insertOne(money);
             res.send(result)
         })
         // get all deposit find API
-        app.get('/deposit', async (req, res) => {
+        app.get('/deposit', verifyToken, verifyAdmin, async (req, res) => {
             const cursor = userDepositCollection.find();
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/usersDeposit', async (req, res) => {
+        app.get('/usersDeposit',verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userDepositCollection.find(query);
@@ -177,13 +177,13 @@ async function run() {
             res.send(result);
         })
         //Bazar 
-        app.post('/bazar', async (req, res) => {
+        app.post('/bazar', verifyToken, verifyAdmin, async (req, res) => {
             const bazar = req.body;
             const result = await bazarCollection.insertOne(bazar);
             res.send(result)
         })
         //Find all bazar
-        app.get('/bazar', async (req, res) => {
+        app.get('/bazar', verifyToken, async (req, res) => {
             const cursor = bazarCollection.find();
             const result = await cursor.toArray()
             res.send(result)
