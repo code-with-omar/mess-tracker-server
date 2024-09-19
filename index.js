@@ -27,9 +27,21 @@ async function run() {
         const bazarCollection = client.db("messTracker").collection("bazar")
         const cookBilCollection = client.db("messTracker").collection("cookBill")
         const managerAllHistory = client.db("messTracker").collection("managerHistory")
+        // jwt
+        app.post('/jwt', async (req, res) => {
+            const user = req.body;
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            res.send({ token });
+        })
+
         app.post('/closeManagerHistory', async (req, res) => {
             const cook = req.body;
             const result = await managerAllHistory.insertOne(cook);
+            res.send(result)
+        })
+        app.get("/closeManagerHistory", async (req, res) => {
+            const cursor = managerAllHistory.find();
+            const result = await cursor.toArray()
             res.send(result)
         })
         // cook bil post
