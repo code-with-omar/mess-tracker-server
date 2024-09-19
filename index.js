@@ -64,6 +64,19 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
+        // make manager/ admin 
+        app.patch('/users/admin/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const updateDoc = {
+                $set: {
+                    role: 'admin'
+                },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc)
+            res.send(result)
+
+        })
         // cook bil post
         app.post('/cookBill', async (req, res) => {
             const cook = req.body;
