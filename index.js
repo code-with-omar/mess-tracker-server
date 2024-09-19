@@ -55,6 +55,17 @@ async function run() {
                 next()
             })
         }
+        const verifyAdmin = async (req, res, next) => {
+            const email = req.decoded.email
+            const query = { email: email }
+            const user = await userCollection.find(query).toArray()
+            const isAdmin = user[0]?.role === 'admin'
+            // console.log(user)
+            if (!isAdmin) {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
+            next()
+        }
         app.post('/closeManagerHistory', async (req, res) => {
             const cook = req.body;
             const result = await managerAllHistory.insertOne(cook);
