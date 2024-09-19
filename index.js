@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const jwt = require('jsonwebtoken');
 
 require('dotenv').config()
 //port
@@ -31,9 +32,28 @@ async function run() {
         app.post('/jwt', async (req, res) => {
             const user = req.body;
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+            console.log(token)
             res.send({ token });
         })
+        // middle for jwt
+        const verifyToken = (req, res, next) => {
 
+            // console.log('Inside verify token', req.body)
+            if (!req.headers.authorization) {
+                return res.status(401).send({ message: 'unauthorized access' })
+            }
+            const token = req.headers.authorization.split(' ')[1]
+            // console.log(token)
+
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+                if (err) {
+                    return res.status(401).send({ message: 'unauthorized access' })
+                }
+                req.decoded = decoded
+                // console.log(req.decoded)
+                next()
+            })
+        }
         app.post('/closeManagerHistory', async (req, res) => {
             const cook = req.body;
             const result = await managerAllHistory.insertOne(cook);
