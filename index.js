@@ -29,11 +29,12 @@ async function run() {
         const bazarCollection = client.db("messTracker").collection("bazar")
         const cookBilCollection = client.db("messTracker").collection("cookBill")
         const managerAllHistory = client.db("messTracker").collection("managerHistory")
+        const userPreviousMonth = client.db("messTracker").collection("previousMonth")
         // jwt
         app.post('/jwt', async (req, res) => {
             const user = req.body;
             const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
-            console.log(token)
+            // console.log(token)
             res.send({ token });
         })
         // middle for jwt
@@ -71,13 +72,18 @@ async function run() {
             const result = await managerAllHistory.insertOne(cook);
             res.send(result)
         })
-        app.get("/closeManagerHistory",verifyToken, async (req, res) => {
+        app.get("/closeManagerHistory", verifyToken, async (req, res) => {
             const cursor = managerAllHistory.find();
             const result = await cursor.toArray()
             res.send(result)
         })
+        app.post('/userPreviousMonth', verifyToken, verifyAdmin, async (req, res) => {
+            const cook = req.body;
+            const result = await userPreviousMonth.insertOne(cook);
+            res.send(result)
+        })
         // make manager/ admin 
-        app.patch('/users/admin/:id', verifyToken, verifyAdmin, async (req, res) => {
+        app.patch('/users/admin/:id', verifyToken, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const updateDoc = {
@@ -108,7 +114,7 @@ async function run() {
             const result = await cookBilCollection.insertOne(cook);
             res.send(result)
         })
-        app.get('/cookBill',verifyToken, async (req, res) => {
+        app.get('/cookBill', verifyToken, async (req, res) => {
             const cursor = cookBilCollection.find();
             const result = await cursor.toArray()
             res.send(result)
@@ -130,7 +136,7 @@ async function run() {
             res.send(result)
         })
         // find individual user by email
-        app.get('/usersFind',verifyToken, async (req, res) => {
+        app.get('/usersFind', verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userCollection.find(query);
@@ -138,7 +144,7 @@ async function run() {
             res.send(result);
         })
         // user meal find
-        app.get('/usersMealFind',verifyToken, async (req, res) => {
+        app.get('/usersMealFind', verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userMealCollection.find(query);
@@ -152,7 +158,7 @@ async function run() {
             res.send(result)
         })
         // find all members meal
-        app.get('/membersAllMeals',verifyToken, async (req, res) => {
+        app.get('/membersAllMeals', verifyToken, async (req, res) => {
             const cursor = userMealCollection.find();
             const result = await cursor.toArray()
             res.send(result)
@@ -169,7 +175,7 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-        app.get('/usersDeposit',verifyToken, async (req, res) => {
+        app.get('/usersDeposit', verifyToken, async (req, res) => {
             const email = req.query.email
             const query = { email: email }
             const cursor = userDepositCollection.find(query);
@@ -177,7 +183,7 @@ async function run() {
             res.send(result);
         })
         //Bazar 
-        app.post('/bazar', verifyToken, verifyAdmin, async (req, res) => {
+        app.post('/bazar', verifyToken, async (req, res) => {
             const bazar = req.body;
             const result = await bazarCollection.insertOne(bazar);
             res.send(result)
