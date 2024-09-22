@@ -23,13 +23,13 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        const userCollection = client.db("messTracker").collection("users")
-        const userMealCollection = client.db("messTracker").collection("meals")
-        const userDepositCollection = client.db("messTracker").collection("deposit")
-        const bazarCollection = client.db("messTracker").collection("bazar")
-        const cookBilCollection = client.db("messTracker").collection("cookBill")
-        const managerAllHistory = client.db("messTracker").collection("managerHistory")
-        const userPreviousMonth = client.db("messTracker").collection("previousMonth")
+        const userCollection = client.db("messTrackerDB").collection("users")
+        const userMealCollection = client.db("messTrackerDB").collection("meals")
+        const userDepositCollection = client.db("messTrackerDB").collection("deposit")
+        const bazarCollection = client.db("messTrackerDB").collection("bazar")
+        const cookBilCollection = client.db("messTrackerDB").collection("cookBill")
+        const managerAllHistory = client.db("messTrackerDB").collection("managerHistory")
+        const userPreviousMonth = client.db("messTrackerDB").collection("previousMonth")
         // jwt
         app.post('/jwt', async (req, res) => {
             const user = req.body;
@@ -129,7 +129,7 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result);
         });
-        app.get('/users', verifyToken, async (req, res) => {
+        app.get('/users', async (req, res) => {
 
             const cursor = userCollection.find();
             const result = await cursor.toArray()
@@ -189,7 +189,7 @@ async function run() {
             res.send(result)
         })
         //Find all bazar
-        app.get('/bazar', verifyToken, async (req, res) => {
+        app.get('/bazar', async (req, res) => {
             const cursor = bazarCollection.find();
             const result = await cursor.toArray()
             res.send(result)
@@ -198,8 +198,8 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         // await client.connect();
         // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        // await client.db("admin").command({ ping: 1 });
+        // console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
